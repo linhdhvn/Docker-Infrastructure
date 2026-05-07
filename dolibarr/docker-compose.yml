@@ -1,0 +1,68 @@
+# Edit this file then run
+# docker compose -f docker-compose.yml up -d
+# docker compose -f docker-compose.yml logs -f -t
+# docker compose -f docker-compose.yml down
+
+name: dolibarr
+volumes:
+  documents:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/dolibarr/documents' # The absolute path on your host
+  custom:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/dolibarr/custom' # The absolute path on your host
+
+networks:
+  db_shared_network:
+    driver: bridge
+    external: true
+    name: db_network
+  dolibarr_network:
+    driver: bridge
+    name: dolibarr_network
+
+services:
+  web:
+    # Choose the version of image to install
+    # dolibarr/dolibarr:latest (the latest stable version)
+    # dolibarr/dolibarr:develop
+    # dolibarr/dolibarr:x.y.z
+    image: dolibarr/dolibarr:latest
+    deploy:
+      restart_policy:
+        condition: always
+    environment:
+      DOLI_INSTALL_AUTO: "1"
+      DOLI_INIT_DEMO: "1"
+      DOLI_PROD: "1"
+      DOLI_DB_TYPE: "mysqli"
+      DOLI_DB_HOST: "mariadb"
+      DOLI_DB_HOST_PORT: "3306"
+      DOLI_DB_NAME: "dolidb"
+      DOLI_DB_USER: "dolidbuser"
+      DOLI_DB_PASSWORD: "Q4*CMgYIlT30"
+      DOLI_URL_ROOT: "http://0.0.0.0/"
+      DOLI_ADMIN_LOGIN: "admin"
+      DOLI_ADMIN_PASSWORD: "tfmYaZiU8JNk"
+      DOLI_CRON: "0"
+      DOLI_CRON_KEY: "BMkdsUWnoeGx"
+      DOLI_COMPANY_NAME: "CÔNG TY TNHH CN SALA : SALA TECHNOLOGY CO., LTD"
+      DOLI_COMPANY_COUNTRYCODE: "VN"
+      PHP_INI_DATE_TIMEZONE: "Asia/Ho_Chi_Minh"
+      PHP_INI_MEMORY_LIMIT: "256M"
+      PHP_INI_UPLOAD_MAX_FILESIZE: "2M"
+      PHP_INI_POST_MAX_SIZE: "8M"
+      PHP_INI_ALLOW_URL_FOPEN: "0"
+    networks:
+      - db_shared_network
+      - dolibarr_network
+    ports:
+      - 31243:80
+    volumes:
+      - documents:/var/www/documents
+      - custom:/var/www/html/custom
+

@@ -1,0 +1,116 @@
+# Edit this file then run
+# docker compose -f docker-compose.yml up -d
+# docker compose -f docker-compose.yml logs -f -t
+# docker compose -f docker-compose.yml down
+
+name: database
+volumes:
+  mariadb:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/database/mariadb' # The absolute path on your host
+  phpmyadmin:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/database/phpmyadmin' # The absolute path on your host
+  mssql:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/database/mssql' # The absolute path on your host
+  redis:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/database/redis' # The absolute path on your host
+  postgresql:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/database/postgresql' # The absolute path on your host
+
+networks:
+  db_network:
+    driver: bridge
+    name: db_network
+
+services:
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: "phpmyadmin"
+    deploy:
+      restart_policy:
+        condition: no
+    volumes:
+      - phpmyadmin:/etc/phpmyadmin
+    networks:
+      - db_network
+    ports:
+      - 31633:80
+    environment:
+      - PMA_ARBITRARY=0
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+    depends_on:
+      - mariadb
+
+  mariadb:
+    # Choose the version of image to install
+    # mariadb:latest (the latest stable version)
+    # mariadb:11.8
+    # mariadb:x.y.z
+    image: mariadb:11.8
+    container_name: "db-mariadb"
+    deploy:
+      restart_policy:
+        condition: always
+    volumes:
+      - mariadb:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "3wbZd-g*kv"
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "0"
+      MARIADB_AUTO_UPGRADE: 1
+      TZ: "Asia/Ho_Chi_Minh"
+    networks:
+      - db_network
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+
+  mssql:
+    # Choose the version of image to install
+    # mcr.microsoft.com/mssql/server:2022-latest (the latest stable version)
+    # mcr.microsoft.com/mssql/server:2019-latest
+    # mcr.microsoft.com/mssql/server:x.y.z
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: "db-mssql"
+    deploy:
+      restart_policy:
+        condition: no
+    volumes:
+      - mssql:/var/opt/mssql
+    environment:
+      MSSQL_SA_PASSWORD: "3wbZd-g*kv"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Standard"
+    networks:
+      - db_network
+    ports:
+      - 1433:1433
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "3wbZd-g*kv" -C -Q "SELECT 1" -b -o /dev/null || exit 1
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 5
