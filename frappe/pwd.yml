@@ -1,35 +1,3 @@
-volumes:
-  db-data:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/frappe/mariadb' # The absolute path on your host
-  redis-queue-data:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/frappe/redis-queue-data' # The absolute path on your host
-  redis-cache-data:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/frappe/redis-cache-data' # The absolute path on your host
-  sites:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/frappe/sites' # The absolute path on your host
-  logs:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/frappe/logs' # The absolute path on your host
-
-networks:
-  frappe_network:
-    driver: bridge
-    name: frappe_network
-
 services:
   backend:
     image: frappe/erpnext:v16.16.0
@@ -156,7 +124,7 @@ services:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
     ports:
-      - "36273:8080"
+      - "8080:8080"
 
   queue-long:
     image: frappe/erpnext:v16.16.0
@@ -213,8 +181,6 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-    volumes:
-      - redis-cache-data:/data
 
   scheduler:
     image: frappe/erpnext:v16.16.0
@@ -246,3 +212,13 @@ services:
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
+
+volumes:
+  db-data:
+  redis-queue-data:
+  sites:
+  logs:
+
+networks:
+  frappe_network:
+    driver: bridge

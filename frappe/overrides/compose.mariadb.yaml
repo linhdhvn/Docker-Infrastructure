@@ -28,7 +28,3 @@ services:
 
 volumes:
   db-data:
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/var/frappe/mariadb' # The absolute path on your host

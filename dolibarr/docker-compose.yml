@@ -45,7 +45,7 @@ services:
       DOLI_DB_NAME: "dolidb"
       DOLI_DB_USER: "dolidbuser"
       DOLI_DB_PASSWORD: "Q4*CMgYIlT30"
-      DOLI_URL_ROOT: "http://0.0.0.0/"
+      DOLI_URL_ROOT: "http://localhost/"
       DOLI_ADMIN_LOGIN: "admin"
       DOLI_ADMIN_PASSWORD: "tfmYaZiU8JNk"
       DOLI_CRON: "0"

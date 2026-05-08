@@ -94,7 +94,3 @@ services:
 # ERPNext requires local assets access (Frappe does not)
 volumes:
   sites:
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/var/frappe/sites' # The absolute path on your host
