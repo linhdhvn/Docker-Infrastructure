@@ -1,0 +1,37 @@
+# Edit this file then run
+# docker compose -f docker-compose-phpmyadmin.yml up -d
+# docker compose -f docker-compose-phpmyadmin.yml logs -f -t
+# docker compose -f docker-compose-phpmyadmin.yml down
+
+name: database
+volumes:
+  phpmyadmin:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/database/phpmyadmin' # The absolute path on your host
+
+networks:
+  db_network:
+    driver: bridge
+    external: true
+    name: db_network
+
+services:
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: "phpmyadmin"
+    deploy:
+      restart_policy:
+        condition: no
+    volumes:
+      - phpmyadmin:/etc/phpmyadmin
+    networks:
+      - db_network
+    ports:
+      - 31633:80
+    environment:
+      - PMA_ARBITRARY=0
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+      - TZ=Asia/Ho_Chi_Minh

@@ -15,21 +15,6 @@ volumes:
       #type: 'none'
       #o: 'bind'
       #device: '/var/database/phpmyadmin' # The absolute path on your host
-  mssql:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/database/mssql' # The absolute path on your host
-  redis:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/database/redis' # The absolute path on your host
-  postgresql:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/database/postgresql' # The absolute path on your host
 
 networks:
   db_network:
@@ -41,30 +26,12 @@ networks:
           gateway: 172.20.100.1 # The gateway for the network
 
 services:
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: "phpmyadmin"
-    deploy:
-      restart_policy:
-        condition: no
-    volumes:
-      - phpmyadmin:/etc/phpmyadmin
-    networks:
-      - db_network
-    ports:
-      - 31633:80
-    environment:
-      - PMA_ARBITRARY=0
-      - PMA_HOST=mariadb
-      - PMA_PORT=3306
-    depends_on:
-      - mariadb
-
   mariadb:
     # Choose the version of image to install
     # mariadb:latest (the latest stable version)
     # mariadb:11.8
     # mariadb:x.y.z
+
     image: mariadb:11.8
     container_name: "db-mariadb"
     deploy:
@@ -73,8 +40,7 @@ services:
     volumes:
       - mariadb:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "123@Qwe" # For compatibility with both MySQL and MariaDB images
-      MARIADB_ROOT_PASSWORD: "123@Qwe" # For compatibility with both MySQL and MariaDB images
+      MYSQL_ROOT_PASSWORD: "3wbZd-g*kv"
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "0"
       MARIADB_AUTO_UPGRADE: 1
       TZ: "Asia/Ho_Chi_Minh"
@@ -93,3 +59,22 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --skip-character-set-client-handshake
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: "phpmyadmin"
+    deploy:
+      restart_policy:
+        condition: no
+    volumes:
+      - phpmyadmin:/etc/phpmyadmin
+    networks:
+      - db_network
+    ports:
+      - 31633:80
+    environment:
+      - PMA_ARBITRARY=0
+      - PMA_HOST=db-mariadb # The hostname of the database container
+      - PMA_PORT=3306 # The port of the database container
+    depends_on:
+      - mariadb

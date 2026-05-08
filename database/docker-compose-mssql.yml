@@ -1,0 +1,45 @@
+# Edit this file then run
+# docker compose -f docker-compose.yml up -d
+# docker compose -f docker-compose.yml logs -f -t
+# docker compose -f docker-compose.yml down
+
+name: database
+volumes:
+  mssql:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/database/mssql' # The absolute path on your host
+
+networks:
+  db_network:
+    driver: bridge
+    name: db_network
+
+services:
+  mssql:
+    # Choose the version of image to install
+    # mcr.microsoft.com/mssql/server:2022-latest (the latest stable version)
+    # mcr.microsoft.com/mssql/server:2019-latest
+    # mcr.microsoft.com/mssql/server:x.y.z
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: "db-mssql"
+    deploy:
+      restart_policy:
+        condition: no
+    volumes:
+      - mssql:/var/opt/mssql
+    environment:
+      MSSQL_SA_PASSWORD: "3wbZd-g*kv"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Standard"
+    networks:
+      - db_network
+    ports:
+      - 1433:1433
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "3wbZd-g*kv" -C -Q "SELECT 1" -b -o /dev/null || exit 1
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 5

@@ -40,7 +40,7 @@ services:
       DOLI_INIT_DEMO: "1"
       DOLI_PROD: "1"
       DOLI_DB_TYPE: "mysqli"
-      DOLI_DB_HOST: "mariadb"
+      DOLI_DB_HOST: "172.20.100.10" # The IP address of the database container
       DOLI_DB_HOST_PORT: "3306"
       DOLI_DB_NAME: "dolidb"
       DOLI_DB_USER: "dolidbuser"
