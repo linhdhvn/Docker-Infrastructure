@@ -20,11 +20,16 @@ volumes:
       #type: 'none'
       #o: 'bind'
       #device: '/var/database/mssql' # The absolute path on your host
-  redis:
+  redis-queue:
     #driver_opts:
       #type: 'none'
       #o: 'bind'
-      #device: '/var/database/redis' # The absolute path on your host
+      #device: '/var/database/redis-queue' # The absolute path on your host
+  redis-cache:
+    #driver_opts:
+      #type: 'none'
+      #o: 'bind'
+      #device: '/var/database/redis-cache' # The absolute path on your host
   postgresql:
     #driver_opts:
       #type: 'none'
@@ -32,12 +37,13 @@ volumes:
       #device: '/var/database/postgresql' # The absolute path on your host
 
 networks:
-  db_network:
+  network_db:
     driver: bridge
-    name: db_network
+    name: network_db
     ipam:
       config:
         - subnet: 172.20.100.0/24 # The subnet for the network
+          ip_range: 172.20.100.128/25 # The IP range for the network
           gateway: 172.20.100.1 # The gateway for the network
 
 services:
@@ -50,13 +56,18 @@ services:
     volumes:
       - phpmyadmin:/etc/phpmyadmin
     networks:
-      - db_network
+       network_db: null
+    dns_search: 
+      - docker-host.local
     ports:
       - 31633:80
+    extra_hosts:
+      - "mariadb.docker-host.local:172.20.100.10"
     environment:
-      - PMA_ARBITRARY=0
-      - PMA_HOST=mariadb
-      - PMA_PORT=3306
+       TZ: Asia/Ho_Chi_Minh
+       PMA_ARBITRARY: "0"
+       PMA_HOST: "mariadb.docker-host.local"
+       PMA_PORT: "3306"
     depends_on:
       - mariadb
 
@@ -66,23 +77,23 @@ services:
     # mariadb:11.8
     # mariadb:x.y.z
     image: mariadb:11.8
-    container_name: "db-mariadb"
+    container_name: "mariadb"
     deploy:
       restart_policy:
         condition: always
     volumes:
       - mariadb:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "123@Qwe" # For compatibility with both MySQL and MariaDB images
-      MARIADB_ROOT_PASSWORD: "123@Qwe" # For compatibility with both MySQL and MariaDB images
+      MYSQL_ROOT_PASSWORD: "3wbZd-g*kv" # For compatibility with both MySQL and MariaDB images
+      MARIADB_ROOT_PASSWORD: "3wbZd-g*kv" # For compatibility with both MySQL and MariaDB images
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "0"
       MARIADB_AUTO_UPGRADE: 1
       TZ: "Asia/Ho_Chi_Minh"
     networks:
-        db_network:
+        network_db:
           ipv4_address: 172.20.100.10 # The static IP address for the container
-    ports:
-      - 3306:3306
+    dns_search: 
+      - docker-host.local
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       start_period: 10s
@@ -93,3 +104,35 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --skip-character-set-client-handshake
+
+  redis-queue:
+    image: redis:6.2-alpine
+    container_name: redis-queue
+    networks:
+      network_db: 
+        ipv4_address: 172.20.100.11 # The static IP address for the container
+    dns_search: 
+      - docker-host.local
+    deploy:
+      restart_policy:
+        condition: always
+    volumes:
+      - redis-queue:/data
+    environment:
+       TZ: Asia/Ho_Chi_Minh
+
+  redis-cache:
+    image: redis:6.2-alpine
+    container_name: redis-cache
+    networks:
+      network_db: 
+        ipv4_address: 172.20.100.12 # The static IP address for the container
+    dns_search: 
+      - docker-host.local
+    deploy:
+      restart_policy:
+        condition: always
+    volumes:
+      - redis-cache:/data
+    environment:
+       TZ: Asia/Ho_Chi_Minh
