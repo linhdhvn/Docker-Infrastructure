@@ -17,21 +17,21 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '/var/database/mariadb' # The absolute path on your host
-  mssql:
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/var/database/mssql' # The absolute path on your host
-  redis-queue:
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/var/database/redis-queue' # The absolute path on your host
-  redis-cache:
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: '/var/database/redis-cache' # The absolute path on your host
+  # mssql:
+  #   driver_opts:
+  #     type: 'none'
+  #     o: 'bind'
+  #     device: '/var/database/mssql' # The absolute path on your host
+  # redis-queue:
+  #   driver_opts:
+  #     type: 'none'
+  #     o: 'bind'
+  #     device: '/var/database/redis-queue' # The absolute path on your host
+  # redis-cache:
+  #   driver_opts:
+  #     type: 'none'
+  #     o: 'bind'
+  #     device: '/var/database/redis-cache' # The absolute path on your host
 
 services:
   # Choose the version of image to install
@@ -68,49 +68,49 @@ services:
       - --collation-server=utf8mb4_unicode_ci
       - --skip-character-set-client-handshake
 
-  redis-queue:
-    image: redis:6.2-alpine
-    container_name: redis-queue
-    networks:
-      network_service: 
-        ipv4_address: 172.20.10.11 # The static IP address for the container
-    dns_search: 
-      - docker-host.local
-    deploy:
-      restart_policy:
-        condition: always
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    volumes:
-      - redis-queue:/data
-    environment:
-       TZ: Asia/Ho_Chi_Minh
+  # redis-queue:
+  #   image: redis:6.2-alpine
+  #   container_name: redis-queue
+  #   networks:
+  #     network_service: 
+  #       ipv4_address: 172.20.10.11 # The static IP address for the container
+  #   dns_search: 
+  #     - docker-host.local
+  #   deploy:
+  #     restart_policy:
+  #       condition: always
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 5s
+  #   volumes:
+  #     - redis-queue:/data
+  #   environment:
+  #      TZ: Asia/Ho_Chi_Minh
 
-  redis-cache:
-    image: redis:6.2-alpine
-    container_name: redis-cache
-    networks:
-      network_service: 
-        ipv4_address: 172.20.10.12 # The static IP address for the container
-    dns_search: 
-      - docker-host.local
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    deploy:
-      restart_policy:
-        condition: always
-    volumes:
-      - redis-cache:/data
-    environment:
-       TZ: Asia/Ho_Chi_Minh
+  # redis-cache:
+  #   image: redis:6.2-alpine
+  #   container_name: redis-cache
+  #   networks:
+  #     network_service: 
+  #       ipv4_address: 172.20.10.12 # The static IP address for the container
+  #   dns_search: 
+  #     - docker-host.local
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 5s
+  #   deploy:
+  #     restart_policy:
+  #       condition: always
+  #   volumes:
+  #     - redis-cache:/data
+  #   environment:
+  #      TZ: Asia/Ho_Chi_Minh
 
   # Choose the version of image to install
   # mcr.microsoft.com/mssql/server:2022-latest (the latest stable version)

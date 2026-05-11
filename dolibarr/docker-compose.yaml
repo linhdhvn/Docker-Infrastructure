@@ -4,6 +4,13 @@
 # docker compose -f docker-compose.yaml down
 
 name: dolibarr
+
+networks:
+  network_service:
+    driver: bridge
+    external: true
+    name: network_service
+  
 volumes:
   documents:
     driver_opts:
@@ -20,12 +27,6 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '/var/dolibarr/html' # The absolute path on your host
-
-networks:
-  network_service:
-    driver: bridge
-    external: true
-    name: network_service
 
 services:
   frontend:

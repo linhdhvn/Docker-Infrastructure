@@ -2,12 +2,12 @@
   {
     "app_name": "erpnext",
     "url": "https://github.com/frappe/erpnext",
-    "branch": "version-15"
+    "branch": "version-16"
   },
   {
     "app_name": "hrms",
     "url": "https://github.com/frappe/hrms",
-    "branch": "version-15"
+    "branch": "version-16"
   },
   {
     "app_name": "helpdesk",
