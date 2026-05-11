@@ -1,32 +1,34 @@
 # Edit this file then run
-# docker compose -f docker-compose.yml up -d
-# docker compose -f docker-compose.yml logs -f -t
-# docker compose -f docker-compose.yml down
+# docker compose -f docker-compose.yaml up -d
+# docker compose -f docker-compose.yaml logs -f -t
+# docker compose -f docker-compose.yaml down
 
 name: dolibarr
 volumes:
   documents:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/dolibarr/documents' # The absolute path on your host
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/var/dolibarr/documents' # The absolute path on your host
   custom:
-    #driver_opts:
-      #type: 'none'
-      #o: 'bind'
-      #device: '/var/dolibarr/custom' # The absolute path on your host
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/var/dolibarr/custom' # The absolute path on your host
+  html:
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/var/dolibarr/html' # The absolute path on your host
 
 networks:
-  network_db_service:
+  network_service:
     driver: bridge
     external: true
-    name: network_db
-  network_dolibarr:
-    driver: bridge
-    name: network_dolibarr
+    name: network_service
 
 services:
-  web:
+  frontend:
     # Choose the version of image to install
     # dolibarr/dolibarr:latest (the latest stable version)
     # dolibarr/dolibarr:develop
@@ -39,19 +41,20 @@ services:
       TZ: "Asia/Ho_Chi_Minh"
       DOLI_INSTALL_AUTO: "1"
       DOLI_INIT_DEMO: "0"
-      DOLI_PROD: "0"
+      DOLI_PROD: "1"
+      DOLI_INSTANCE_UNIQUE_ID: "uxgscX9MtawKYZQs5G9LxkjO1xmzYYlS"
       DOLI_DB_TYPE: "mysqli"
-      DOLI_DB_HOST: "mariadb.docker-host.local" # The database host, which should be the same as the DB_HOST in the database service
+      DOLI_DB_HOST: "mariadb.docker-host.local"
       DOLI_DB_HOST_PORT: "3306"
-      DOLI_DB_NAME: "dolibarrdb_sala"
-      DOLI_DB_USER: "dolidbarr_sala"
-      DOLI_DB_PASSWORD: "Q4*CMgYIlT30"
-      DOLI_URL_ROOT: "http://localhost/"
+      DOLI_DB_NAME: "dolibarrdb"
+      DOLI_DB_USER: "dolibarruser"
+      DOLI_DB_PASSWORD: "2u1Kn7j_Uc5sw74h"
+      DOLI_URL_ROOT: "https://erp.salatech.vn/"
       DOLI_ADMIN_LOGIN: "admin"
-      DOLI_ADMIN_PASSWORD: "admin"
+      DOLI_ADMIN_PASSWORD: "tfmYaZiU8JNk"
       DOLI_CRON: "0"
       DOLI_CRON_KEY: "BMkdsUWnoeGx"
-      DOLI_COMPANY_NAME: "CÔNG TY TNHH CN SALA : SALA TECHNOLOGY CO., LTD"
+      DOLI_COMPANY_NAME: "CÔNG TY TNHH CÔNG NGHỆ SALA : SALA TECHNOLOGY CO., LTD"
       DOLI_COMPANY_COUNTRYCODE: "VN"
       PHP_INI_DATE_TIMEZONE: "Asia/Ho_Chi_Minh"
       PHP_INI_MEMORY_LIMIT: "256M"
@@ -59,15 +62,14 @@ services:
       PHP_INI_POST_MAX_SIZE: "8M"
       PHP_INI_ALLOW_URL_FOPEN: "0"
     networks:
-      - network_db_service
-      - network_dolibarr
+      - network_service
     ports:
       - 31243:80
     extra_hosts:
-      - "mariadb.docker-host.local:172.20.100.10"
+      - "mariadb.docker-host.local:172.20.10.10"
     dns_search:
       - docker-host.local
     volumes:
+      - html:/var/www/html
       - documents:/var/www/documents
       - custom:/var/www/html/custom
-
