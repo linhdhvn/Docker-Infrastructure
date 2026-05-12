@@ -19,6 +19,7 @@
 
 docker build --no-cache --build-arg=FRAPPE_PATH=https://github.com/frappe/frappe --build-arg=FRAPPE_BRANCH=version-16 --secret=id=apps_json,src=apps.json --tag=frappe/erpnext-custom:v16 --file=images/production/Containerfile .
 
+docker build --no-cache --secret=id=apps_json,src=apps.json --tag=frappe/erpnext-custom:v16 --file=images/production/Containerfile .
 
 
 docker compose --env-file custom.env -f compose.yaml -f overrides/compose.redis.yaml -f overrides/compose.noproxy.yaml config > docker-compose.yaml
