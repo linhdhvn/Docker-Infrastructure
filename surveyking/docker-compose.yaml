@@ -1,0 +1,45 @@
+# Edit this file then run
+# docker compose -f docker-compose.yaml up -d
+# docker compose -f docker-compose.yaml logs -f -t
+# docker compose -f docker-compose.yaml down
+
+name: surveyking
+networks:
+  network_service:
+    driver: bridge
+    name: network_service
+    external: true
+
+volumes:
+  files:
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/var/surveyking/files' # The absolute path on your host
+  logs:
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: '/var/surveyking/logs' # The absolute path on your host
+
+services:
+  surveyking:
+    image: surveyking/surveyking:latest
+    container_name: "surveyking"
+    deploy:
+      restart_policy:
+        condition: no
+    volumes:
+      - files:/app/files
+      - logs:/app/logs
+    networks:
+       network_service: null
+    dns_search: 
+      - docker-host.local
+    ports:
+      - 1991:1991 # Map port 31633 on the host to port 80 in the container
+    extra_hosts:
+      - "mariadb.docker-host.local:172.20.10.10"
+    environment:
+       TZ: Asia/Ho_Chi_Minh
+       

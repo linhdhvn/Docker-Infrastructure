@@ -115,6 +115,8 @@ ARG ERPNEXT_REPO=https://github.com/frappe/erpnext
 ARG ERPNEXT_BRANCH=version-16
 ARG HRMS_REPO=https://github.com/frappe/hrms
 ARG HRMS_BRANCH=version-16
+ARG ERPNEXTVN_REPO=https://github.com/linhdhvn/erpnextvn
+ARG ERPNEXTVN_BRANCH=main
 RUN bench init \
   --frappe-branch=${FRAPPE_BRANCH} \
   --frappe-path=${FRAPPE_PATH} \
