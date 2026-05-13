@@ -37,7 +37,7 @@ services:
     dns_search: 
       - docker-host.local
     ports:
-      - 1991:1991 # Map port 31633 on the host to port 80 in the container
+      - 31634:1991 # Map port 31634 on the host to port 1991 in the container
     extra_hosts:
       - "mariadb.docker-host.local:172.20.10.10"
     environment:
