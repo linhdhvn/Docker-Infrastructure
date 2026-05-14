@@ -110,13 +110,13 @@ USER frappe
 
 FROM build AS builder
 
-ARG FRAPPE_PATH=https://github.com/frappe/frappe.git
+ARG FRAPPE_PATH=https://github.com/linhdhvn/Frappe.git
 ARG FRAPPE_BRANCH=version-16
-ARG ERPNEXT_REPO=https://github.com/frappe/erpnext.git
+ARG ERPNEXT_REPO=https://github.com/linhdhvn/Frappe-ERPNext.git
 ARG ERPNEXT_BRANCH=version-16
-ARG HRMS_REPO=https://github.com/frappe/hrms.git
+ARG HRMS_REPO=https://github.com/linhdhvn/Frappe-HRMS.git
 ARG HRMS_BRANCH=version-16
-ARG POSNEXT_REPO=https://github.com/linhdhvn/POSNext.git
+ARG POSNEXT_REPO=https://github.com/linhdhvn/Frappe-POSNext.git
 ARG POSNEXT_BRANCH=version-16
 ARG OPENAI_REPO=https://github.com/linhdhvn/Frappe-OpenAI.git
 ARG OPENAI_BRANCH=version-16
@@ -126,10 +126,10 @@ ARG HEALTHCARE_BRANCH=version-16
 RUN bench init --frappe-branch=${FRAPPE_BRANCH} --frappe-path=${FRAPPE_PATH} --no-procfile --no-backups --skip-redis-config-generation --verbose /home/frappe/frappe-bench \
   && cd /home/frappe/frappe-bench \
   && bench get-app --branch=${ERPNEXT_BRANCH} --resolve-deps erpnext ${ERPNEXT_REPO} \
-  && bench get-app --branch=${HRMS_BRANCH} hrms ${HRMS_REPO} \
-  && bench get-app --branch=${POSNEXT_BRANCH} posnext ${POSNEXT_REPO} \
-  && bench get-app --branch=${OPENAI_BRANCH} openai ${OPENAI_REPO} \
-  && bench get-app --branch=${HEALTHCARE_BRANCH} healthcare ${HEALTHCARE_REPO} \
+  && bench get-app --branch=${HRMS_BRANCH} --resolve-deps hrms ${HRMS_REPO} \
+  && bench get-app --branch=${POSNEXT_BRANCH} --resolve-deps posnext ${POSNEXT_REPO} \
+  && bench get-app --branch=${OPENAI_BRANCH} --resolve-deps openai ${OPENAI_REPO} \
+  && bench get-app --branch=${HEALTHCARE_BRANCH} --resolve-deps healthcare ${HEALTHCARE_REPO} \
   && echo "{}" > sites/common_site_config.json \
   && find apps -mindepth 1 -path "*/.git" | xargs rm -fr
 
